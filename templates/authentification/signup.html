@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+</head>
+<body>
+    <h3>Sign Up</h3>
+    <form action="/signup" method="post">
+        {% csrf_token %}
+
+        <label for="">User Name</label>
+        <input type="text" id="username" name="username" placeholder="create a username(only letters and numbers)"Required>
+        <br>
+        <label for="">First Name</label>
+        <input type="text" id="fname" name="fname" placeholder="Enter your first name"Required>
+        <br>
+        <label for="">Last Name</label>
+        <input type="text" id="lname" name="lname" placeholder="Enter your last name"Required>
+        <br>
+
+        <label for="">Email Adress</label>
+        <input type="email" id="email" name="email" placeholder="Enter you email address )"Required>
+        <br>
+
+        <label for="">Password</label>
+        <input type="password" id="pass1" name="pass1" placeholder="Create a Password"Required>
+        <br>
+
+        <label for="">Confirm </label>
+        <input type="password" id="pass2" name="pass2" placeholder="Confirm the Password" requiredRequired>
+<br>
+        <button type="submit">Sign Up</button>
+
+    </form>
+
+    {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-danger">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+</body>
+</html>
