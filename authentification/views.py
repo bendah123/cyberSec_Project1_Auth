@@ -17,9 +17,13 @@ def signup(request):
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
 
-        if User.objects.filter(email=email).exists():
-           messages.error(request, 'An account with this email address already exists.')
-           return redirect('signup')
+        #if User.objects.filter(email=email).exists():
+         #  messages.error(request, 'An account with this email address already exists.')
+           #return redirect('signup')
+        query = f"INSERT INTO auth_user (username, first_name, last_name, email, password) VALUES ('{username}', '{fname}', '{lname}', '{email}', '{pass1}')"
+        User.objects.raw(query)
+
+    
 
         myuser= User.objects.create_user(username, email, pass1)
         myuser.first_name = fname
