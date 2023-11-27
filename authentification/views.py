@@ -18,7 +18,8 @@ def home(request):
 def Loginpage(request):
     return render(request,"authentification/info.html")
 
-'''FLOW 5 : -Identification and Authentication Failures SO HERE WE ADDED SOME PASSWORD VERIFICATION CONDITIONS 
+'''Fix:FLOW 5 : A07:2021 - Identification and Authentication Failures
+ SO HERE WE ADDED SOME PASSWORD VERIFICATION CONDITIONS 
 def validate_password_strength(password):
     # Validate password length
     if len(password) < 8:
@@ -47,39 +48,41 @@ def signup(request):
         email = request.POST['email']
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
-          # Password verification
-        #password_error = validate_password_strength(pass1)
-       # if password_error:
+        '''Password verification call function to solve flaw 5 
+        password_error = validate_password_strength(pass1)
+        if password_error: 
            # messages.error(request, password_error)
-           # return redirect('signup')
+           # return redirect('signup')'''
 
         if pass1 != pass2:
             messages.error(request, "Passwords do not match")
             return redirect('signup')
 
-       #flaw 1 solution:Broken Access Control 
-       #if User.objects.filter(email=email).exists():
-       #messages.error(request, 'An account with this email address already exists.')
-       #return redirect('signup')
+        
+        '''FLAW 1 solution:Broken Access Control 
+        if User.objects.filter(email=email).exists():
+         messages.error(request, 'An account with this email address already exists.')
+        return redirect('signup')'''
         date_joined = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #hashed_password=pass1
-        #hashed_password = pass1
-        #flaw 4 
-        hashed_password = pass1
-
-        query = f"INSERT INTO auth_user (username, first_name, last_name, email, password, is_superuser, is_staff, is_active, date_joined) VALUES ('{username}', '{fname}', '{lname}', '{email}', '{hashed_password}', 0, 0, 1, '{date_joined}')"
+        #FLAW 4 A02:2021-Cryptographic Failures
+        password1 =pass1
+        '''Solution Flaw 4 
+        password1 = make_password(pass1)'''
+        #FLAW 2 A03:2021:Injection
+        query = f"INSERT INTO auth_user (username, first_name, last_name, email, password, is_superuser, is_staff, is_active, date_joined) VALUES ('{username}', '{fname}', '{lname}', '{email}', '{password1}', 0, 0, 1, '{date_joined}')"
         with connection.cursor() as cursor:
             cursor.execute(query)
-        #flaw 2 solution:Sql Injection 
-        #myuser= User.objects.create_user(username, email, pass1)
-        #myuser.first_name = fname
-        #myuser.last_name = lname
-        #myuser.save()
+        '''flaw 2 solution:Sql Injection 
+        myuser= User.objects.create_user(username, email, pass1)
+        myuser.first_name = fname
+        myuser.last_name = lname
+        myuser.save()'''
 
         messages.success(request, "Your account has been successfully created")
         return redirect('signin')
 
     return render(request, "authentification/signup.html")
+
 
 def signin(request):
     if request.method == 'POST':
@@ -92,10 +95,10 @@ def signin(request):
             fname = user.first_name
             return render(request, 'authentification/index.html', {'fname': fname})
         except Exception as e:
-            #Flow3  Security Misconfiguration flaw 
+            #FLAW 3 A05:2021-Security Misconfiguration   
             messages.error(request, "An error occurred: " + str(e))
-            #SOLUTION FLOW 3:
-            #messages.error(request, "Invalid username or password. Please try again.")
+            '''SOLUTION FLOW 3:
+            messages.error(request, "Invalid username or password. Please try again.")'''
             return redirect('home')
 
     return render(request, "authentification/signin.html")
