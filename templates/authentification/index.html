@@ -17,15 +17,18 @@
 </div>
      {% endfor %}
 
-    <h3>OKEY!</h3>
-    {%if user.is_authenticated%}
-    <h3>Hello {{fname}}</h3>
-    <h4>You are successfully logged in</h4>
-    <button type="submit"><a href="/signout">SignOut</a></button>
-    {%else%}
-    <button type="submit"><a href="/signup">SignUp</a></button>
-    <button type="submit"><a href="/signin">SignIn</a></button>
-    {%endif%}
+     {% if user.is_authenticated %}
+     <h2>HELLO {{ fname }} </h2>
+     <h2>WELCOME TO THE MAIN PAGE</h2>
+     <h2>You are successfully logged in</h2>
+     <button type="submit"><a href="/signout">SignOut</a></button>
+ {% else %}
+     <h3>HELLO AND WELCOME TO MY WEBSITE!</h3>
+     <h4>Now You Can Create An Account Or Sign in To Your Account</h4>
+     <h5>PRESS ON ONE BUTTON</h5>
+     <button type="submit"><a href="/signup">Sign Up</a></button>
+     <button type="submit"><a href="/signin">Sign In</a></button>
+ {% endif %}
 
 
 
