@@ -65,9 +65,9 @@ def signup(request):
         return redirect('signup')'''
         date_joined = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #FLAW 4 A02:2021-Cryptographic Failures
-        #password1 =pass1
+        password1 =pass1
         #Solution Flaw 4 
-        password1 = make_password(pass1)
+        #password1 = make_password(pass1)
         #FLAW 2 A03:2021:Injection
         query = f"INSERT INTO auth_user (username, first_name, last_name, email, password, is_superuser, is_staff, is_active, date_joined) VALUES ('{username}', '{fname}', '{lname}', '{email}', '{password1}', 0, 0, 1, '{date_joined}')"
         with connection.cursor() as cursor:
