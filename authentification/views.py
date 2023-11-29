@@ -65,9 +65,9 @@ def signup(request):
         return redirect('signup')'''
         date_joined = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #FLAW 4 A02:2021-Cryptographic Failures
-        password1 =pass1
-        '''Solution Flaw 4 
-        password1 = make_password(pass1)'''
+        #password1 =pass1
+        #Solution Flaw 4 
+        password1 = make_password(pass1)
         #FLAW 2 A03:2021:Injection
         query = f"INSERT INTO auth_user (username, first_name, last_name, email, password, is_superuser, is_staff, is_active, date_joined) VALUES ('{username}', '{fname}', '{lname}', '{email}', '{password1}', 0, 0, 1, '{date_joined}')"
         with connection.cursor() as cursor:
@@ -88,17 +88,26 @@ def signin(request):
     if request.method == 'POST':
         username = request.POST['username']
         pass1 = request.POST['pass1']
-        user = authenticate(request, username=username, password=pass1)
 
+        # Retrieve the user from the database without password verification
         try:
+            user = User.objects.get(username=username)
+        except Exception as e:
+            #FLAW 3 A05:2021-Security Misconfiguration   
+            messages.error(request, "An Error Happened"+ str(e))
+            '''SOLUTION FLOW 3:
+            messages.error(request, "Invalid username or password. Please try again.")'''
+            return redirect('home')
+
+        # Check if the provided password matches the stored password (plaintext)
+        #solution FLAW 4
+        #if user.check_password(pass1):
+        if pass1==user.password:
             login(request, user)
             fname = user.first_name
             return render(request, 'authentification/index.html', {'fname': fname})
-        except Exception as e:
-            #FLAW 3 A05:2021-Security Misconfiguration   
-            messages.error(request, "An error occurred: " + str(e))
-            '''SOLUTION FLOW 3:
-            messages.error(request, "Invalid username or password. Please try again.")'''
+        else:
+            messages.error(request, "Invalid username or password. Please try again.")
             return redirect('home')
 
     return render(request, "authentification/signin.html")
