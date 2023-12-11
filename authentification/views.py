@@ -79,8 +79,7 @@ def signup(request):
         myuser.save()'''
 
         messages.success(request, "Your account has been successfully created")
-        return redirect('signin')
-
+        return render(request, 'authentification/welcome.html', {'fname': fname})
     return render(request, "authentification/signup.html")
 
 
@@ -105,7 +104,7 @@ def signin(request):
         if pass1==user.password:
             login(request, user)
             fname = user.first_name
-            return render(request, 'authentification/index.html', {'fname': fname})
+            return render(request, 'authentification/welcome.html', {'fname': fname})
         else:
             messages.error(request, "Invalid username or password. Please try again.")
             return redirect('home')
