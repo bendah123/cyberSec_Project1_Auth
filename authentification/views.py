@@ -60,11 +60,7 @@ def signup(request):
             messages.error(request, "Passwords do not match")
             return redirect('signup')
 
-        
-        '''FLAW 1 solution:Broken Access Control 
-        if User.objects.filter(email=email).exists():
-         messages.error(request, 'An account with this email address already exists.')
-        return redirect('signup')'''
+       
         date_joined = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #FLAW 4 A02:2021-Cryptographic Failures
         password1 =pass1
