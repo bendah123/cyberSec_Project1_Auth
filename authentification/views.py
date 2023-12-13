@@ -85,37 +85,6 @@ def signup(request):
         
     return render(request, "authentification/signup.html")
 
-
-
-'''def signin(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        pass1 = request.POST['pass1']
-
-        # Retrieve the user from the database without password verification
-        try:
-            user = User.objects.get(username=username)
-        except Exception as e:
-            #FLAW 3 A05:2021-Security Misconfiguration   
-            messages.error(request, "An Error Happened"+ str(e))
-            SOLUTION FLOW 3:
-            messages.error(request, "Invalid username or password. Please try again.")
-            return redirect('home')
-
-        # Check if the provided password matches the stored password (plaintext)
-        #solution FLAW 4
-        #if user.password==pass1:
-        if user.check_password(pass1):
-            login(request, user)
-            fname = user.first_name
-            return redirect('welcome', username=user.username)
-        else:
-            messages.error(request, "Invalid username or password. Please try again.")
-            return redirect('home')
-
-    return render(request, "authentification/signin.html")'''
-
-
 def signin(request):
 
     if request.method == 'POST':
