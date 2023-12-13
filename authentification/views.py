@@ -96,7 +96,8 @@ def signin(request):
 
         if row and row[1] == password:  # Compare non-hashed passwords
                 return redirect('welcome', username=username)
-        else: 
+        else:
+          #FIX: FLAW 4 I USED User uncomment that and remove the else+The the query part
             try:
                 user = User.objects.get(username=username)
             except Exception as e:
@@ -105,7 +106,6 @@ def signin(request):
                 #SOLUTION FLOW 3 :
                 #messages.error(request, "Invalid username or password. Please try again.")
                 return redirect('home')
-            #FIX: FLAW 4 I USED User uncomment that and remove the else+The the query part
             '''if user and check_password(password, user.password):
                     login(request, user)
                     fname = user.first_name
