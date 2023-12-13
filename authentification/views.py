@@ -9,6 +9,8 @@ from datetime import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 import re
+from django.contrib.auth.hashers import check_password
+
 
 
 
@@ -65,9 +67,9 @@ def signup(request):
         return redirect('signup')'''
         date_joined = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #FLAW 4 A02:2021-Cryptographic Failures
-        #password1 =pass1
+        password1 =pass1
         #Solution Flaw 4 
-        password1 = make_password(pass1)
+        #password1 = make_password(pass1)
         #FLAW 2 A03:2021:Injection
         query = f"INSERT INTO auth_user (username, first_name, last_name, email, password, is_superuser, is_staff, is_active, date_joined) VALUES ('{username}', '{fname}', '{lname}', '{email}', '{password1}', 0, 0, 1, '{date_joined}')"
         with connection.cursor() as cursor:
@@ -84,7 +86,8 @@ def signup(request):
     return render(request, "authentification/signup.html")
 
 
-def signin(request):
+
+'''def signin(request):
     if request.method == 'POST':
         username = request.POST['username']
         pass1 = request.POST['pass1']
@@ -95,20 +98,54 @@ def signin(request):
         except Exception as e:
             #FLAW 3 A05:2021-Security Misconfiguration   
             messages.error(request, "An Error Happened"+ str(e))
-            '''SOLUTION FLOW 3:
-            messages.error(request, "Invalid username or password. Please try again.")'''
+            SOLUTION FLOW 3:
+            messages.error(request, "Invalid username or password. Please try again.")
             return redirect('home')
 
         # Check if the provided password matches the stored password (plaintext)
         #solution FLAW 4
+        #if user.password==pass1:
         if user.check_password(pass1):
-        #if pass1==user.password:
             login(request, user)
             fname = user.first_name
             return redirect('welcome', username=user.username)
         else:
             messages.error(request, "Invalid username or password. Please try again.")
             return redirect('home')
+
+    return render(request, "authentification/signin.html")'''
+
+
+def signin(request):
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        #FIX FLAW 4 A02:2021-Cryptographic Failures
+        
+        query = f"SELECT * FROM auth_user WHERE username = '{username}'"
+        with connection.cursor() as cursor:
+                cursor.execute(query)
+                row = cursor.fetchone()
+
+        if row and row[1] == password:  # Compare non-hashed passwords
+                return redirect('welcome', username=username)
+        else: 
+            try:
+                user = User.objects.get(username=username)
+            except Exception as e:
+                #FLAW 3 A05:2021-Security Misconfiguration   
+                messages.error(request, "An Error Happened"+ str(e))
+                #SOLUTION FLOW 3 :
+                #messages.error(request, "Invalid username or password. Please try again.")
+                return redirect('home')
+            #FIX: FLAW 4 I USED User uncomment that and remove the else+The the query part
+            '''if user and check_password(password, user.password):
+                    login(request, user)
+                    fname = user.first_name
+            return redirect('welcome', username=user.username)'''
+                
 
     return render(request, "authentification/signin.html")
 
@@ -120,17 +157,13 @@ def signout(request):
     return redirect('home')
 
 def welcome(request, username):
-    # Retrieve the user based on the username parameter
     user = User.objects.get(username=username)
-    #FIX 1 solution:Broken Access Control 
+    #FIX 1 solution:Broken Access Control just uncomment 
     '''if not request.user.is_authenticated or request.user != user:
            messages.error(request, "You are not authorized to access this page.")
            return redirect('signin')'''
     fname = user.first_name
-
     return render(request, 'authentification/welcome.html', {'fname': fname})
 
 
 
-
- 
