@@ -91,7 +91,7 @@ def signin(request):
         username = request.POST['username']
         password = request.POST['password']
         
-        #FIX FLAW 4 A02:2021-Cryptographic Failures
+        #FLAW 4 A02:2021-Cryptographic Failures
         
         query = f"SELECT * FROM auth_user WHERE username = '{username}'"
         with connection.cursor() as cursor:
